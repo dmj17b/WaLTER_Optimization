@@ -1,4 +1,3 @@
-import AutoSim
 import yaml
 import sys
 import time
@@ -7,6 +6,7 @@ import mujoco.viewer
 from pathlib import Path
 import lib.MotorModel as motor
 import numpy as np
+import AutoSim
 
 
 # Create a new simulation model with AutoSim
@@ -21,12 +21,15 @@ walter = AutoSim.GenerateModel(model_config_path=model_config_path, motor_config
 walter.gen_scene()
 
 # Randomize ledge height and model pos:
-rng = np.random.default_rng(seed=46)
+rng = np.random.default_rng(seed=69)
 walter.randomize_test_scene(rng)
 
 # Compile the model:
 m = walter.spec.compile()
 d = mujoco.MjData(m)
+
+# Randomize initial robot pose:
+d = walter.randomize_pose(rng,m,d)
 
 # Initializing motor models (ignore this part)
 fr_hip = motor.MotorModel(m, d, 'head_right_thigh_joint', motor_config['hip_params'], 12)
@@ -62,7 +65,7 @@ with mujoco.viewer.launch_passive(m,d) as viewer:
         viewer
 
         # Sim step:
-        mujoco.mj_step(m, d)
+        # mujoco.mj_step(m, d)
 
         # Sync changes in the viewer
         viewer.sync()

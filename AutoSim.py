@@ -504,7 +504,33 @@ class GenerateModel():
         self.add_box([0,0, ledge_height/2], [xi_max*1.5, yi_max*1.5, ledge_height/2])
         self.spec.bodies[1].pos = [xi, yi, ledge_height+0.4]        
         self.spec.bodies[1].quat = [np.cos(heading_i/2), 0, 0, np.sin(heading_i/2)]
+        # Random initial joint positions:
+        
+    def randomize_pose(self,rng,m,d):
+        # Min/max joint positions to randomize:
+        hip_min = np.pi/6
+        hip_max = np.pi/2
+        knee_min = -np.pi/2
+        knee_max = np.pi/2
 
+        # Hip positions:
+        rand_hip_splay = rng.uniform(hip_min, hip_max)
+        d.jnt('head_left_thigh_joint').qpos[0] = -rand_hip_splay
+        d.jnt('head_right_thigh_joint').qpos[0] = -rand_hip_splay
+        d.jnt('torso_left_thigh_joint').qpos[0] = rand_hip_splay
+        d.jnt('torso_right_thigh_joint').qpos[0] = rand_hip_splay
+
+        # Knee positions: 
+        rand_left_knees = rng.uniform(knee_min, knee_max)
+        rand_right_knees = rng.uniform(knee_min, knee_max)
+        d.jnt('head_left_thigh_shin_joint').qpos[0] = rng.uniform(knee_min, knee_max)
+        d.jnt('torso_left_thigh_shin_joint').qpos[0] = rng.uniform(knee_min, knee_max)
+        d.jnt('head_right_thigh_shin_joint').qpos[0] = rng.uniform(knee_min, knee_max)
+        d.jnt('torso_right_thigh_shin_joint').qpos[0] = rng.uniform(knee_min, knee_max)
+
+
+
+        return d
 
     def add_stairs(self, pos: list = [2,0,0], rise: float = 0.1, run: float = 0.1, width: float=1.2, num_steps: int=5):
         for i in range(num_steps):
