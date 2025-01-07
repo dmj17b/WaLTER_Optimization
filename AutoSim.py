@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 import numpy as np
 import mujoco
+import scipy
 
 
 class GenerateModel():
@@ -434,6 +435,7 @@ class GenerateModel():
         self.spec = spec
 
 
+
     def gen_scene(self):
         # Create ground plane texture/material
         ground = self.spec.add_texture(type = mujoco.mjtTexture.mjTEXTURE_2D,
@@ -476,8 +478,32 @@ class GenerateModel():
                 )
         
 
+
     def add_box(self, pos:list, size:list):
         self.spec.worldbody.add_body(pos=pos).add_geom(type=mujoco.mjtGeom.mjGEOM_BOX, size=size)
+
+    def randomize_test_scene(self,rng):
+        # Min/Max random values:
+        xi_max = 1.25
+        yi_max = 1.25
+        ledge_height_min = 0.1
+        ledge_height_max = 0.5
+        min_heading = -np.pi/2
+        max_heading = np.pi/2
+        max_knee_vel = 0.05
+        max_wheel_vel = 0.1
+        
+        # Random initial position and heading: 
+        xi = rng.uniform(-1,1)*xi_max
+        yi = rng.uniform(-1,1)*yi_max
+        heading_i = rng.uniform(min_heading, max_heading)
+
+
+        # Random ledge height:
+        ledge_height = rng.uniform(ledge_height_min,ledge_height_max)
+        self.add_box([0,0, ledge_height/2], [xi_max*1.5, yi_max*1.5, ledge_height/2])
+        self.spec.bodies[1].pos = [xi, yi, ledge_height+0.4]        
+        self.spec.bodies[1].quat = [np.cos(heading_i/2), 0, 0, np.sin(heading_i/2)]
 
 
     def add_stairs(self, pos: list = [2,0,0], rise: float = 0.1, run: float = 0.1, width: float=1.2, num_steps: int=5):
