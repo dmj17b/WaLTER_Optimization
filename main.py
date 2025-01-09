@@ -7,7 +7,7 @@ from pathlib import Path
 import lib.MotorModel as motor
 import numpy as np
 import AutoSim
-
+import lib.RandomControl as rc
 
 # Create a new simulation model with AutoSim
 model_config_path = 'model_config.yaml'
@@ -55,6 +55,14 @@ motors = [fr_hip, fl_hip, br_hip, bl_hip,
           fr_knee, fl_knee, br_knee, bl_knee, 
           fr_wheel1_joint, fr_wheel2_joint, fl_wheel1_joint, fl_wheel2_joint, br_wheel1_joint, br_wheel2_joint, bl_wheel1_joint, bl_wheel2_joint]
 
+# Initialize the controller:
+ctrl = rc.RandomController(m, d, motors, rng)
+ctrl.randomize_control()
+
+# Randomize control values:
+
+
+
 with mujoco.viewer.launch_passive(m,d) as viewer:
     viewer.cam.distance = 5
     viewer.cam.azimuth = 45
@@ -64,8 +72,11 @@ with mujoco.viewer.launch_passive(m,d) as viewer:
         step_start = time.time()
         viewer
 
+        # Call controller:
+        ctrl.control()
+
         # Sim step:
-        # mujoco.mj_step(m, d)
+        mujoco.mj_step(m, d)
 
         # Sync changes in the viewer
         viewer.sync()

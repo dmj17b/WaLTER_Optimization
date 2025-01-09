@@ -486,8 +486,8 @@ class GenerateModel():
         # Min/Max random values:
         xi_max = 1.25
         yi_max = 1.25
-        ledge_height_min = 0.1
-        ledge_height_max = 0.5
+        ledge_height_min = 0.25
+        ledge_height_max = 0.8
         min_heading = -np.pi/2
         max_heading = np.pi/2
         max_knee_vel = 0.05

@@ -1,6 +1,6 @@
 waist_params:
   spring_stiffness: 50000000
-  damping: 1
+  damping: 100
   range: [-25, 25]
 
 hip_params:
