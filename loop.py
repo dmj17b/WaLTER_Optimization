@@ -92,8 +92,6 @@ for i in range(num_tests):
             torso_angle = Rotation.from_quat(d.body('torso').xquat).as_euler('xyz', degrees=True)[2]
             torso_head_angle_offset = abs(torso_angle-head_angle)
 
-            print(d.body('torso').xpos)
-
             # Check for success:
             if (abs(d.jnt('torso_joint').qpos[0]) > success_dist or abs(d.jnt('torso_joint').qpos[1]) > success_dist) and torso_head_angle_offset<torso_head_angle_tolerance:
                 num_successes += 1
