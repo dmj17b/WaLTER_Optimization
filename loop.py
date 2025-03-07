@@ -9,6 +9,7 @@ import numpy as np
 import AutoSim
 import lib.RandomControl as rc
 from scipy.spatial.transform import Rotation
+import keyboard
 
 # Create a new simulation model with AutoSim
 model_config_path = 'model_config.yaml'
@@ -16,15 +17,16 @@ motor_config_path = 'motor_config.yaml'
 motor_config = yaml.safe_load(Path(motor_config_path).read_text())
 
 num_tests = 50
-rng_seed = 420
+rng_seed = 421
 
 success_dist = 3
 torso_head_angle_tolerance = 25
+time_limit = 100
 
 num_successes = 0
 num_failures = 0
 
-for i in range(num_tests):
+for i in range(6,num_tests):
 
     # Generate the new robot spec with random ICs:
     walter = AutoSim.GenerateModel(model_config_path=model_config_path, motor_config_path=motor_config_path)
@@ -74,7 +76,22 @@ for i in range(num_tests):
         viewer.cam.azimuth = 45
 
         start = time.time()
+        paused = False
+        print("Seed " + str(rng_seed+i) + " started")
+
         while viewer.is_running():
+
+            if keyboard.is_pressed('p'):
+                paused = not paused
+                time.sleep(0.1)
+
+            if paused:
+                if keyboard.is_pressed('p'):
+                    paused = not paused
+                    break
+                time.sleep(0.1)
+                continue
+
             step_start = time.time()
             viewer
 
@@ -101,7 +118,7 @@ for i in range(num_tests):
             # Check for failure:
             rot = Rotation.from_quat(d.body('torso').xquat)
             angles = rot.as_euler('xyz', degrees=True)
-            if(abs(angles[2])>110 or time.time()-start>10):
+            if(abs(angles[2])>110 or time.time()-start>time_limit):
                 num_failures += 1
                 print('Successes: ' + str(num_successes) + " Failures: " + str(num_failures))
                 break
@@ -113,7 +130,7 @@ for i in range(num_tests):
             # Rudimentary time keeping, will drift relative to wall clock.
             time_until_next_step = m.opt.timestep - (time.time() - step_start)
             if time_until_next_step > 0:
-                time.sleep(time_until_next_step*0.005)
+                time.sleep(time_until_next_step*.05)
 
 print(f"Successes: {num_successes}")
 print(f"Failures: {num_failures}")

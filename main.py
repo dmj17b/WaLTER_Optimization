@@ -8,6 +8,7 @@ import lib.MotorModel as motor
 import numpy as np
 import AutoSim
 import lib.RandomControl as rc
+import keyboard
 
 # Create a new simulation model with AutoSim
 model_config_path = 'model_config.yaml'
@@ -21,7 +22,7 @@ walter = AutoSim.GenerateModel(model_config_path=model_config_path, motor_config
 walter.gen_scene()
 
 # Randomize ledge height and model pos:
-rng = np.random.default_rng(seed=69)
+rng = np.random.default_rng(seed=421)
 walter.randomize_test_scene(rng)
 
 # Compile the model:
@@ -68,10 +69,21 @@ with mujoco.viewer.launch_passive(m,d) as viewer:
     viewer.cam.azimuth = 45
 
     start = time.time()
+    paused = False
     while viewer.is_running():
-        step_start = time.time()
-        viewer
+        if keyboard.is_pressed('p'):
+            paused = not paused
+            time.sleep(0.1)
 
+        if paused:
+            if keyboard.is_pressed('p'):
+                paused = not paused
+                break
+            time.sleep(0.1)
+            continue
+        step_start = time.time()
+            
+            
         # Call controller:
         ctrl.control()
 

@@ -17,6 +17,8 @@ class GenerateModel():
         # Build model using Mujoco Spec:
         spec = mujoco.MjSpec()
 
+        color = np.array([177/255, 166/255, 136/255, 1])
+
         # Parse Configs:
         model_config = yaml.safe_load(Path(model_config_path).read_text())
 
@@ -111,6 +113,7 @@ class GenerateModel():
                 torso_length / 2, torso_width / 2, torso_height / 2,
             ],
             mass=torso_mass,
+            rgba = color,
         )
 
         # Torso Kinematic Chain:
@@ -200,6 +203,7 @@ class GenerateModel():
                         mass=torso_children_params[child]['mass'],
                         friction = wheel_friction,
                         solref = wheel_solref,
+                        rgba = color,
                     )
                 else:
                     body.add_geom(
@@ -209,6 +213,7 @@ class GenerateModel():
                         pos=mirror * torso_children_params[child]['geom_pos'],
                         quat=torso_children_params[child]['geom_quat'],
                         mass=torso_children_params[child]['mass'],
+                        rgba = color,
                     )
 
 
@@ -238,6 +243,7 @@ class GenerateModel():
             pos=[0, 0, 0],
             quat=[1, 0, 0, 0],
             mass=head_mass,
+            rgba = color,
         )
 
         # Head Kinematic Chain:
@@ -327,6 +333,7 @@ class GenerateModel():
                         mass=head_children_params[child]['mass'],
                         friction = wheel_friction,
                         solref = wheel_solref,
+                        rgba = color,
                     )
                 else:
                     body.add_geom(
@@ -336,6 +343,7 @@ class GenerateModel():
                         pos=mirror * head_children_params[child]['geom_pos'],
                         quat=head_children_params[child]['geom_quat'],
                         mass=head_children_params[child]['mass'],
+                        rgba = color,
                     )
 
 # Adding Actuators:
