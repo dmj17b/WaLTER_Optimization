@@ -1,0 +1,76 @@
+<mujoco model="MuJoCo Model">
+  <compiler angle="radian"/>
+
+  <asset>
+    <texture type="2d" name="ground_texture" builtin="checker" rgb1="0.5 0.8 0.9" rgb2="0.5 0.9 0.8" markrgb="0.8 0.8 0.8" width="200" height="200"/>
+    <texture type="skybox" name="skybox" builtin="gradient" width="300" height="1800"/>
+    <material name="groundplane" texture="ground_texture" texrepeat="2 2"/>
+  </asset>
+
+  <worldbody>
+    <geom size="0 0 0.05" type="plane" material="groundplane"/>
+    <light pos="0 0 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="0 2 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="0 4 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="0 6 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="0 8 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="2 0 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="2 2 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="2 4 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="2 6 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="2 8 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="4 0 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="4 2 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="4 4 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="4 6 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="4 8 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="6 0 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="6 2 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="6 4 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="6 6 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="6 8 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="8 0 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="8 2 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="8 4 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="8 6 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <light pos="8 8 15" dir="0 0 -1" directional="true" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+    <body name="torso" pos="0 0 1">
+      <joint name="z_slide" pos="0 0 0" axis="0 0 1" type="slide"/>
+      <joint name="x_slide" pos="0 0 0" axis="1 0 0" type="slide"/>
+      <joint name="y_rot" pos="0 0 0" axis="0 1 0"/>
+      <geom size="0.025 0.25" quat="0.707107 0 0.707107 0" type="capsule" contype="2" mass="1"/>
+      <body name="front_thigh" pos="0.25 0 -0.25">
+        <joint name="front_hip" pos="0 0 0.25" axis="0 1 0"/>
+        <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
+        <body name="front_shin" pos="0 0 -0.25">
+          <joint name="front_knee" pos="0 0 0" axis="0 1 0"/>
+          <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
+          <body name="front_wheel1" pos="0 0 0.25">
+            <joint name="front_wheel1_joint" pos="0 0 0" axis="0 1 0"/>
+            <geom size="0.1" contype="4" conaffinity="5" mass="1"/>
+          </body>
+          <body name="front_wheel2" pos="0 0 -0.25">
+            <joint name="front_wheel2_joint" pos="0 0 0" axis="0 1 0"/>
+            <geom size="0.1" contype="4" conaffinity="5" mass="1"/>
+          </body>
+        </body>
+      </body>
+      <body name="rear_thigh" pos="-0.25 0 -0.25">
+        <joint name="rear_hip" pos="0 0 0.25" axis="0 1 0"/>
+        <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
+        <body name="rear_shin" pos="0 0 -0.25">
+          <joint name="rear_knee" pos="0 0 0" axis="0 1 0"/>
+          <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
+          <body name="rear_wheel1" pos="0 0 0.25">
+            <joint name="rear_wheel1_joint" pos="0 0 0" axis="0 1 0"/>
+            <geom size="0.1" contype="4" conaffinity="5" mass="1"/>
+          </body>
+          <body name="rear_wheel2" pos="0 0 -0.25">
+            <joint name="rear_wheel2_joint" pos="0 0 0" axis="0 1 0"/>
+            <geom size="0.1" contype="4" conaffinity="5" mass="1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
