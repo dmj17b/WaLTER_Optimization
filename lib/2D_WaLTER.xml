@@ -42,7 +42,7 @@
       <body name="front_thigh" pos="0.25 0 -0.25">
         <joint name="front_hip" pos="0 0 0.25" axis="0 1 0"/>
         <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
-        <body name="front_shin" pos="0 0 -0.25">
+        <body name="front_shin" pos="0 0 -0.25" quat="0.707107 0 0.707107 0">
           <joint name="front_knee" pos="0 0 0" axis="0 1 0"/>
           <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
           <body name="front_wheel1" pos="0 0 0.25">
@@ -58,7 +58,7 @@
       <body name="rear_thigh" pos="-0.25 0 -0.25">
         <joint name="rear_hip" pos="0 0 0.25" axis="0 1 0"/>
         <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
-        <body name="rear_shin" pos="0 0 -0.25">
+        <body name="rear_shin" pos="0 0 -0.25" quat="0.707107 0 0.707107 0">
           <joint name="rear_knee" pos="0 0 0" axis="0 1 0"/>
           <geom size="0.025 0.25" type="capsule" contype="2" mass="1"/>
           <body name="rear_wheel1" pos="0 0 0.25">

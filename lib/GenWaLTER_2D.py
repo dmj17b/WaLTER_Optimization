@@ -1,12 +1,14 @@
 from typing import Any
 from absl import app
 import os
+import sys
 from pathlib import Path
 import yaml
 import numpy as np
 import mujoco
 import scipy
-
+sys.path.append(os.path.dirname(__file__))
+import MotorModel as motor
 
 # 2D Model will appear in the X-Z plane
 
@@ -48,38 +50,39 @@ test_model_params = {
 # Motor parameters:
 test_motor_params = {
     'front_hip': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'gear_ratio': 1.0,
     },
     'front_knee': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
     },
     'front_wheel': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
     },
     'rear_hip': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
     },
     'rear_knee': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
     },
     'rear_wheel': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 1.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
     }
@@ -87,7 +90,7 @@ test_motor_params = {
 
 
 
-class GenWaLTER2D():
+class WaLTER2D():
 
     def __init__(self, model_params: dict, motor_params: dict):
         self.model_params = model_params
@@ -164,7 +167,7 @@ class GenWaLTER2D():
         front_shin_pos = [0, 0, -self.model_params['front_shin']['length']/2]
         front_shin = front_thigh.add_body(
             name = 'front_shin',
-            quat = [1, 0, 0, 0],
+            quat = [1, 0, 1, 0],
             pos = front_shin_pos,
         )
         front_shin.add_geom(
@@ -244,7 +247,7 @@ class GenWaLTER2D():
         rear_shin_pos = [0, 0, -self.model_params['rear_shin']['length']/2]
         rear_shin = rear_thigh.add_body(
             name = 'rear_shin',
-            quat = [1, 0, 0, 0],
+            quat = [1, 0, 1, 0],
             pos = rear_shin_pos,
         )
         rear_shin.add_geom(
@@ -299,6 +302,53 @@ class GenWaLTER2D():
             name = 'rear_wheel2_joint'
         )
 
+        # Assigning actuators
+        spec.add_actuator(
+            name = 'f_hip',
+            target = 'front_hip',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'f_knee',
+            target = 'front_knee',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'f_wheel1',
+            target = 'front_wheel1_joint',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'f_wheel2',
+            target = 'front_wheel2_joint',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'r_hip',
+            target = 'rear_hip',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'r_knee',
+            target = 'rear_knee',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'r_wheel1',
+            target = 'rear_wheel1_joint',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+        spec.add_actuator(
+            name = 'r_wheel2',
+            target = 'rear_wheel2_joint',
+            trntype = mujoco.mjtTrn.mjTRN_JOINT,
+        )
+    
+    def add_motors(self, motor_params: dict):
+        # Adding motors to the model
+        pass
+        
+
     def gen_scene(self):
         # Create ground plane texture/material
         ground = self.spec.add_texture(type = mujoco.mjtTexture.mjTEXTURE_2D,
@@ -339,7 +389,20 @@ class GenWaLTER2D():
                     directional=True,
                 )
 
+    def add_box(self, pos:list, size:list):
+        self.spec.worldbody.add_body(pos=pos).add_geom(type=mujoco.mjtGeom.mjGEOM_BOX, size=size)
+
+    def add_stairs(self, pos: list = [2,0,0], rise: float = 0.1, run: float = 0.1, width: float=1.2, num_steps: int=5):
+        for i in range(num_steps):
+            self.add_box(
+                pos=[pos[0]+i*run, pos[1], pos[2] + i*rise],
+                size=[run, width, rise],
+            )
+
     def compile_to_XML(self):
+        """
+        Compiles current model to XML file
+        """
         self.spec.compile()
         xml_path = os.path.join(os.path.dirname(__file__), '2D_WaLTER.xml')
         with open(xml_path, 'w') as f:
@@ -347,7 +410,7 @@ class GenWaLTER2D():
         
 
 def main():
-    walter = GenWaLTER2D(test_model_params, test_model_params)
+    walter = WaLTER2D(test_model_params, test_model_params)
     walter.gen_scene()
     walter.compile_to_XML()
 

@@ -435,7 +435,6 @@ class GenerateModel():
         self.spec = spec
 
 
-
     def gen_scene(self):
         # Create ground plane texture/material
         ground = self.spec.add_texture(type = mujoco.mjtTexture.mjTEXTURE_2D,
