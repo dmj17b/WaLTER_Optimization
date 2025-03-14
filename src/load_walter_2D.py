@@ -49,40 +49,53 @@ test_model_params = {
 # Motor parameters:
 test_motor_params = {
     'front_hip': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 10.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'gear_ratio': 1.0,
+        'rotor_inertia': 0.001,
     },
     'front_knee': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 100.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'gear_ratio': 1.0,
+        'rotor_inertia': 0.001,
     },
     'front_wheel': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 10.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
+
     },
     'rear_hip': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 10.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     },
     'rear_knee': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 100.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     },
     'rear_wheel': {
-        'kp': 1.0,
-        'kd': 0.1,
+        'Kp': 10.0,
+        'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     }
 }
 
@@ -95,16 +108,13 @@ walter = GenWaLTER_2D.WaLTER2D(test_model_params, test_motor_params)
 walter.gen_scene()
 walter.add_stairs()
 # Randomize ledge height and model pos:
-rng = np.random.default_rng(seed=69)
 
 # Compile the model:
 m = walter.spec.compile()
 d = mujoco.MjData(m)
 
-
-
-
-
+# Add motor controllers:
+walter.add_motors(m,d, test_motor_params)
 
 
 with mujoco.viewer.launch_passive(m,d) as viewer:
@@ -118,6 +128,7 @@ with mujoco.viewer.launch_passive(m,d) as viewer:
 
         # Sim step:
         mujoco.mj_step(m, d)
+        walter.tumble_drive()
 
         # Sync changes in the viewer
         viewer.sync()

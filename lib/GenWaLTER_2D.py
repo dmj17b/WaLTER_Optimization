@@ -50,45 +50,55 @@ test_model_params = {
 # Motor parameters:
 test_motor_params = {
     'front_hip': {
-        'Kp': 1.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'gear_ratio': 1.0,
+        'rotor_inertia': 0.001,
     },
     'front_knee': {
-        'Kp': 1.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
+        'gear_ratio': 1.0,
+        'rotor_inertia': 0.001,
     },
     'front_wheel': {
-        'Kp': 1.0,
+        'Kp': 10.0,
         'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
+
     },
     'rear_hip': {
-        'Kp': 1.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     },
     'rear_knee': {
-        'Kp': 1.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     },
     'rear_wheel': {
-        'Kp': 1.0,
+        'Kp': 10.0,
         'Kd': 0.1,
         'stall_torque': 10.0,
         'no_load_speed': 10.0,
+        'rotor_inertia': 0.001,
+        'gear_ratio': 1.0,
     }
 }
-
-
 
 class WaLTER2D():
 
@@ -110,6 +120,14 @@ class WaLTER2D():
         wheel_conaffinity = 5
         world_contype = 1
         world_conaffinity = 1
+
+        # Calculate joint armatures:
+        f_hip_armature = self.motor_params['front_hip']['rotor_inertia']*self.motor_params['front_hip']['gear_ratio']**2
+        f_knee_armature = self.motor_params['front_knee']['rotor_inertia']*self.motor_params['front_knee']['gear_ratio']**2
+        f_wheel_armature = self.motor_params['front_wheel']['rotor_inertia']*self.motor_params['front_wheel']['gear_ratio']**2
+        r_hip_armature = self.motor_params['rear_hip']['rotor_inertia']*self.motor_params['rear_hip']['gear_ratio']**2
+        r_knee_armature = self.motor_params['rear_knee']['rotor_inertia']*self.motor_params['rear_knee']['gear_ratio']**2
+        r_wheel_armature = self.motor_params['rear_wheel']['rotor_inertia']*self.motor_params['rear_wheel']['gear_ratio']**2
 
         # Generating the basic 2D WaLTER model:m
         torso_body = self.spec.worldbody.add_body(
@@ -160,7 +178,8 @@ class WaLTER2D():
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
             pos = [0, 0, self.model_params['front_thigh']['length']/2],
-            name = 'front_hip'
+            name = 'front_hip',
+            armature = f_hip_armature
         )
 
         # Creating the front shin:
@@ -181,7 +200,8 @@ class WaLTER2D():
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
             pos = [0, 0, 0],
-            name = 'front_knee'
+            name = 'front_knee',
+            armature = f_knee_armature,
         )
 
         # Creating the front wheels:
@@ -201,7 +221,8 @@ class WaLTER2D():
         front_wheel1.add_joint(
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
-            name = 'front_wheel1_joint'
+            name = 'front_wheel1_joint',
+            armature = f_wheel_armature,
         )
         front_wheel2_pos = [0, 0, -self.model_params['front_shin']['length']/2]
         front_wheel2 = front_shin.add_body(
@@ -219,7 +240,8 @@ class WaLTER2D():
         front_wheel2.add_joint(
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
-            name = 'front_wheel2_joint'
+            name = 'front_wheel2_joint',
+            armature = f_wheel_armature,
         )
 
         # Creating the rear thigh:
@@ -240,7 +262,8 @@ class WaLTER2D():
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
             pos = [0, 0, self.model_params['rear_thigh']['length']/2],
-            name = 'rear_hip'
+            name = 'rear_hip',
+            armature = r_hip_armature,
         )
 
         # Creating the rear shin:
@@ -261,7 +284,8 @@ class WaLTER2D():
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
             pos = [0, 0, 0],
-            name = 'rear_knee'
+            name = 'rear_knee',
+            armature = r_knee_armature,
         )
 
         # Creating the rear wheels:
@@ -281,7 +305,8 @@ class WaLTER2D():
         rear_wheel1.add_joint(
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
-            name = 'rear_wheel1_joint'
+            name = 'rear_wheel1_joint',
+            armature = r_wheel_armature,
         )
         rear_wheel2_pos = [0, 0, -self.model_params['rear_shin']['length']/2]
         rear_wheel2 = rear_shin.add_body(
@@ -299,55 +324,72 @@ class WaLTER2D():
         rear_wheel2.add_joint(
             type = mujoco.mjtJoint.mjJNT_HINGE,
             axis = [0, 1, 0],
-            name = 'rear_wheel2_joint'
+            name = 'rear_wheel2_joint',
+            armature = r_wheel_armature,
         )
 
         # Assigning actuators
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'f_hip',
             target = 'front_hip',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'f_knee',
             target = 'front_knee',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'f_wheel1',
             target = 'front_wheel1_joint',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'f_wheel2',
             target = 'front_wheel2_joint',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'r_hip',
             target = 'rear_hip',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'r_knee',
             target = 'rear_knee',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'r_wheel1',
             target = 'rear_wheel1_joint',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
-        spec.add_actuator(
+        self.spec.add_actuator(
             name = 'r_wheel2',
             target = 'rear_wheel2_joint',
             trntype = mujoco.mjtTrn.mjTRN_JOINT,
         )
     
-    def add_motors(self, motor_params: dict):
-        # Adding motors to the model
-        pass
+    def add_motors(self,m:mujoco.MjModel,d:mujoco.MjData,motor_params: dict):
+        self.f_hip_motor = motor.MotorModel(m, d, 'front_hip', motor_params['front_hip'], 0)
+        self.f_knee_motor = motor.MotorModel(m, d, 'front_knee', motor_params['front_knee'], 1)
+        self.f_wheel1_motor = motor.MotorModel(m, d, 'front_wheel1_joint', motor_params['front_wheel'], 2)
+        self.f_wheel2_motor = motor.MotorModel(m, d, 'front_wheel2_joint', motor_params['front_wheel'], 3)
+        self.r_hip_motor = motor.MotorModel(m, d, 'rear_hip', motor_params['rear_hip'], 4)
+        self.r_knee_motor = motor.MotorModel(m, d, 'rear_knee', motor_params['rear_knee'], 5)
+        self.r_wheel1_motor = motor.MotorModel(m, d, 'rear_wheel1_joint', motor_params['rear_wheel'], 6)
+        self.r_wheel2_motor = motor.MotorModel(m, d, 'rear_wheel2_joint', motor_params['rear_wheel'], 7)
+        self.motors = [self.f_hip_motor, self.f_knee_motor, self.f_wheel1_motor, self.f_wheel2_motor, self.r_hip_motor, self.r_knee_motor, self.r_wheel1_motor, self.r_wheel2_motor]
         
+    def tumble_drive(self):
+        self.f_hip_motor.pos_control(-np.pi/4)
+        self.f_knee_motor.vel_control(1)
+        self.f_wheel1_motor.vel_control(1)
+        self.f_wheel2_motor.vel_control(1)
+        self.r_hip_motor.pos_control(np.pi/4)
+        self.r_knee_motor.vel_control(1)
+        self.r_wheel1_motor.vel_control(1)
+        self.r_wheel2_motor.vel_control(1)
 
     def gen_scene(self):
         # Create ground plane texture/material
