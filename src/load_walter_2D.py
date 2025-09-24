@@ -49,9 +49,9 @@ test_model_params = {
 # Motor parameters:
 test_motor_params = {
     'front_hip': {
-        'Kp': 10.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'gear_ratio': 1.0,
         'rotor_inertia': 0.001,
@@ -59,7 +59,7 @@ test_motor_params = {
     'front_knee': {
         'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'gear_ratio': 1.0,
         'rotor_inertia': 0.001,
@@ -67,16 +67,16 @@ test_motor_params = {
     'front_wheel': {
         'Kp': 10.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'rotor_inertia': 0.001,
         'gear_ratio': 1.0,
 
     },
     'rear_hip': {
-        'Kp': 10.0,
+        'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'rotor_inertia': 0.001,
         'gear_ratio': 1.0,
@@ -84,7 +84,7 @@ test_motor_params = {
     'rear_knee': {
         'Kp': 100.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'rotor_inertia': 0.001,
         'gear_ratio': 1.0,
@@ -92,7 +92,7 @@ test_motor_params = {
     'rear_wheel': {
         'Kp': 10.0,
         'Kd': 0.1,
-        'stall_torque': 10.0,
+        'stall_torque': 100.0,
         'no_load_speed': 10.0,
         'rotor_inertia': 0.001,
         'gear_ratio': 1.0,
